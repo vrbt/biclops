@@ -14,10 +14,11 @@ import java.util.Arrays;
 public class IntegerDecoder implements Decoder<Integer, Endianness> {
 
     private static final int INTEGER_LENGTH = 32;
+    private static final byte BYTE_LENGTH = 8;
 
     @Override
     public Integer decode(final ByteBuffer buffer) {
-        return buffer.getInt();
+        return decode(buffer, INTEGER_LENGTH);
     }
 
     @Override
@@ -29,7 +30,7 @@ public class IntegerDecoder implements Decoder<Integer, Endianness> {
 
     @Override
     public Integer decode(final ByteBuffer buffer, final int length) {
-        final BigInteger bigInteger = new BigInteger(1, Arrays.copyOf(buffer.array(), buffer.array().length)).shiftRight(INTEGER_LENGTH - length);
+        final BigInteger bigInteger = new BigInteger(1, Arrays.copyOf(buffer.array(), INTEGER_LENGTH / BYTE_LENGTH)).shiftRight(INTEGER_LENGTH - length);
         ByteBufferUtils.leftShift(buffer, length);
         return bigInteger.intValue();
     }
