@@ -31,14 +31,14 @@ class IntegerTest extends Specification {
         contains
     }
 
-    private class BoxedBooleanPrimitive {
+    private class BoxedIntegerPrimitive {
         @IntegerField
         private int field;
     }
 
     def 'detect @IntegerField annotation on int field'() {
         given:
-        def flagField = BoxedIntegerObject.class.declaredFields.find { field -> StringUtils.equalsIgnoreCase(field.getName(), 'field') }
+        def flagField = BoxedIntegerPrimitive.class.declaredFields.find { field -> StringUtils.equalsIgnoreCase(field.getName(), 'field') }
 
         when:
         def contains = flagField.annotations.any { Annotation annotation -> StringUtils.containsIgnoreCase(annotation.annotationType().name, 'IntegerField') }
@@ -48,7 +48,7 @@ class IntegerTest extends Specification {
     }
 
     @Unroll
-    def 'decode whole integer from buffer'() {
+    def 'decode a whole integer from the buffer'() {
         given:
         def ByteBuffer buffer = ByteBuffer.wrap Ints.toByteArray(intValue)
         def decoder = new IntegerDecoder()
@@ -72,7 +72,7 @@ class IntegerTest extends Specification {
     }
 
     @Unroll
-    def 'decode whole integer from buffer - little endian'() {
+    def 'decode a whole integer from the buffer - little endian'() {
         given:
         def ByteBuffer buffer = ByteBuffer.wrap Ints.toByteArray(intValue)
         def decoder = new IntegerDecoder()
@@ -94,7 +94,7 @@ class IntegerTest extends Specification {
     }
 
     @Unroll
-    def 'decode 4-bit part of an integer from buffer'() {
+    def 'decode a 4-bit part of an integer from the buffer'() {
         given:
         def ByteBuffer buffer = ByteBuffer.wrap Ints.toByteArray(intValue)
         def decoder = new IntegerDecoder()
@@ -117,7 +117,7 @@ class IntegerTest extends Specification {
     }
 
     @Unroll
-    def 'decode 4-bit part of an integer from buffer and shift buffer'() {
+    def 'decode a various length part of an integer from the buffer and shift the buffer'() {
         given:
         def ByteBuffer buffer = ByteBuffer.wrap Ints.toByteArray(intValue)
         def decoder = new IntegerDecoder()
