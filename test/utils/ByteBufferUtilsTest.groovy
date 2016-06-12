@@ -19,7 +19,7 @@ class ByteBufferUtilsTest extends Specification {
         def buffer = ByteBuffer.wrap Ints.toByteArray(originalValue)
 
         when:
-        def shiftedBuffer = ByteBufferUtils.leftShift(buffer, shift)
+        def shiftedBuffer = ByteBufferUtils.leftShift buffer, shift
         def result = Ints.fromByteArray shiftedBuffer.array()
 
         then:

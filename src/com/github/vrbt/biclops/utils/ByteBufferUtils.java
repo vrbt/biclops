@@ -2,6 +2,7 @@ package com.github.vrbt.biclops.utils;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * Created by Robert Wróblewski on 2016-06-11.
@@ -18,6 +19,7 @@ public class ByteBufferUtils {
         final int resultLength = buffer.capacity();
         final int sourceOffset = resultLength >= shiftedBytes.length ? 0 : 1;
         final int destinationOffset = resultLength - shiftedBytes.length > 0 ? resultLength - shiftedBytes.length : 0;
+        Arrays.fill(buffer.array(), (byte) 0);
         System.arraycopy(shiftedBytes, sourceOffset, buffer.array(), destinationOffset, shiftedBytes.length - sourceOffset);
         return buffer;
     }

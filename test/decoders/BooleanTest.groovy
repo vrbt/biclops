@@ -1,6 +1,6 @@
 package decoders
 
-import com.github.vrbt.biclops.annotations.Bit
+import com.github.vrbt.biclops.annotations.BitField
 import com.github.vrbt.biclops.decoders.BooleanDecoder
 import org.apache.commons.lang3.StringUtils
 import spock.lang.Specification
@@ -9,38 +9,40 @@ import spock.lang.Unroll
 import java.lang.annotation.Annotation
 import java.nio.ByteBuffer
 
+import static com.github.vrbt.biclops.ordering.BitOrder.MOST_SIGNIFICANT_BIT_LAST
+
 /**
  * Created by Robert on 2016-06-11.
  */
 class BooleanTest extends Specification {
 
     private class BoxedBooleanObject {
-        @Bit
+        @BitField
         private Boolean flag;
     }
 
-    def 'detect @Bit annotation on Boolean field'() {
+    def 'detect @BitField annotation on Boolean field'() {
         given:
-        def flagField = BoxedBooleanObject.class.declaredFields.find { field -> StringUtils.equalsIgnoreCase(field.getName(), 'flag') }
+        def flagField = BoxedBooleanObject.class.declaredFields.find { field -> StringUtils.equalsIgnoreCase field.getName(), 'flag' }
 
         when:
-        def contains = flagField.annotations.any { Annotation annotation -> StringUtils.containsIgnoreCase(annotation.annotationType().name, 'Bit') }
+        def contains = flagField.annotations.any { Annotation annotation -> StringUtils.containsIgnoreCase annotation.annotationType().name, 'BitField' }
 
         then:
         contains
     }
 
     private class BoxedBooleanPrimitive {
-        @Bit
+        @BitField
         private boolean flag;
     }
 
-    def 'detect @Bit annotation on boolean field'() {
+    def 'detect @BitField annotation on boolean field'() {
         given:
-        def flagField = BoxedBooleanObject.class.declaredFields.find { field -> StringUtils.equalsIgnoreCase(field.getName(), 'flag') }
+        def flagField = BoxedBooleanObject.class.declaredFields.find { field -> StringUtils.equalsIgnoreCase field.getName(), 'flag' }
 
         when:
-        def contains = flagField.annotations.any { Annotation annotation -> StringUtils.containsIgnoreCase(annotation.annotationType().name, 'Bit') }
+        def contains = flagField.annotations.any { Annotation annotation -> StringUtils.containsIgnoreCase annotation.annotationType().name, 'BitField' }
 
         then:
         contains
@@ -49,11 +51,11 @@ class BooleanTest extends Specification {
     @Unroll
     def 'decode single bit from buffer'() {
         given:
-        def ByteBuffer buffer = ByteBuffer.wrap(byteValue)
+        def ByteBuffer buffer = ByteBuffer.wrap byteValue
         def decoder = new BooleanDecoder()
 
         when:
-        def decoded = decoder.decode(buffer)
+        def decoded = decoder.decode buffer
 
         then:
         decoded == decodedValue
@@ -71,11 +73,11 @@ class BooleanTest extends Specification {
     @Unroll
     def 'decode single bit from buffer and shift buffer'() {
         given:
-        def ByteBuffer buffer = ByteBuffer.wrap(byteValue)
+        def ByteBuffer buffer = ByteBuffer.wrap byteValue
         def decoder = new BooleanDecoder()
 
         when:
-        def decoded = decoder.decode(buffer)
+        def decoded = decoder.decode buffer
         def shiftedByte = buffer.array()[0]
 
         then:
@@ -90,5 +92,124 @@ class BooleanTest extends Specification {
         0b0000_0000 as byte | false        | 0b0000_0000 as byte
         0b0100_0000 as byte | false        | 0b1000_0000 as byte
         0b0010_0000 as byte | false        | 0b0100_0000 as byte
+    }
+
+    @Unroll
+    def 'decode single bit from buffer and shift buffer by 2 bits'() {
+        given:
+        def ByteBuffer buffer = ByteBuffer.wrap byteValue
+        def decoder = new BooleanDecoder()
+
+        when:
+        def decoded = decoder.decode buffer, 2
+        def shiftedByte = buffer.array()[0]
+
+        then:
+        decoded == decodedValue
+        shiftedByte == shiftedByteValue
+
+        where:
+        byteValue           | decodedValue | shiftedByteValue
+        0b1000_0000 as byte | true         | 0b0000_0000 as byte
+        0b1110_0000 as byte | true         | 0b1000_0000 as byte
+        0b1000_0001 as byte | true         | 0b0000_0100 as byte
+        0b0000_0000 as byte | false        | 0b0000_0000 as byte
+        0b0010_0000 as byte | false        | 0b1000_0000 as byte
+        0b0001_0000 as byte | false        | 0b0100_0000 as byte
+    }
+
+    @Unroll
+    def 'decode single bit from buffer and shift buffer by 4 bits'() {
+        given:
+        def ByteBuffer buffer = ByteBuffer.wrap byteValue
+        def decoder = new BooleanDecoder()
+
+        when:
+        def decoded = decoder.decode buffer, 4
+        def shiftedByte = buffer.array()[0]
+
+        then:
+        decoded == decodedValue
+        shiftedByte == shiftedByteValue
+
+        where:
+        byteValue           | decodedValue | shiftedByteValue
+        0b1000_0000 as byte | true         | 0b0000_0000 as byte
+        0b1110_1000 as byte | true         | 0b1000_0000 as byte
+        0b1000_0001 as byte | true         | 0b0001_0000 as byte
+        0b0000_0000 as byte | false        | 0b0000_0000 as byte
+        0b0000_1000 as byte | false        | 0b1000_0000 as byte
+        0b0001_0000 as byte | false        | 0b0000_0000 as byte
+    }
+
+    @Unroll
+    def 'decode single bit from buffer and shift buffer by whole byte'() {
+        given:
+        def ByteBuffer buffer = ByteBuffer.wrap byteValue
+        def decoder = new BooleanDecoder()
+
+        when:
+        def decoded = decoder.decode buffer, 8
+        def shiftedByte = buffer.array()[0]
+
+        then:
+        decoded == decodedValue
+        shiftedByte == shiftedByteValue
+
+        where:
+        byteValue           | decodedValue | shiftedByteValue
+        0b1000_0000 as byte | true         | 0b0000_0000 as byte
+        0b1110_1000 as byte | true         | 0b0000_0000 as byte
+        0b1000_0001 as byte | true         | 0b0000_0000 as byte
+        0b0000_0000 as byte | false        | 0b0000_0000 as byte
+        0b0000_1000 as byte | false        | 0b0000_0000 as byte
+        0b0001_0000 as byte | false        | 0b0000_0000 as byte
+    }
+
+    @Unroll
+    def 'decode single bit from buffer with MSB last'() {
+        given:
+        def ByteBuffer buffer = ByteBuffer.wrap byteValue
+        def decoder = new BooleanDecoder()
+
+        when:
+        def decoded = decoder.decode buffer, MOST_SIGNIFICANT_BIT_LAST
+
+        then:
+        decoded == decodedValue
+
+        where:
+        byteValue           | decodedValue
+        0b0001_0001 as byte | true
+        0b1000_0001 as byte | true
+        0b1100_0001 as byte | true
+        0b1111_1110 as byte | false
+        0b0000_0000 as byte | false
+        0b1000_0000 as byte | false
+    }
+
+    @Unroll
+    def 'decode single bit from buffer with MSB last and shift buffer'() {
+        given:
+        def ByteBuffer buffer = ByteBuffer.wrap byteValue
+        def decoder = new BooleanDecoder()
+
+        when:
+        def decoded = decoder.decode buffer, MOST_SIGNIFICANT_BIT_LAST
+        def shiftedByte = buffer.array()[0]
+
+        then:
+        decoded == decodedValue
+        shiftedByte == shiftedByteValue
+
+        where:
+        byteValue           | decodedValue | shiftedByteValue
+        0b0001_0001 as byte | true         | 0 as byte
+        0b1000_0001 as byte | true         | 0 as byte
+        0b1100_0001 as byte | true         | 0 as byte
+        0b1111_1110 as byte | false        | 0 as byte
+        0b0000_0000 as byte | false        | 0 as byte
+        0b1000_0000 as byte | false        | 0 as byte
+
     }
 }
