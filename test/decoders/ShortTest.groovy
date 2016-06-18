@@ -2,6 +2,7 @@ package decoders
 
 import com.github.vrbt.biclops.annotations.ShortField
 import com.github.vrbt.biclops.decoders.ShortDecoder
+import com.github.vrbt.biclops.ordering.BitOrder
 import com.github.vrbt.biclops.ordering.Endianness
 import com.google.common.primitives.Shorts
 import org.apache.commons.lang3.StringUtils
@@ -82,13 +83,54 @@ class ShortTest extends Specification {
         decoded == decodedValue
 
         where:
-        intValue                 | decodedValue
-        0 as short               | 0 as short
-        1 as short               | 256 as short
-        Byte.MAX_VALUE as short  | 32512 as short
-        Byte.MIN_VALUE as short  | -32513 as short
-        Short.MAX_VALUE as short | -129 as short
-        Short.MIN_VALUE as short | 128 as short
+        intValue                       | decodedValue
+        0b0000_0000_0000_0000 as short | 0b0000_0000_0000_0000 as short
+        0b0000_0000_0000_0001 as short | 0b0000_0001_0000_0000 as short
+        0b0001_0011_0100_0001 as short | 0b0100_0001_0001_0011 as short
+        0b0111_1111_1111_1111 as short | 0b1111_1111_0111_1111 as short
+        0b1000_0000_0000_0000 as short | 0b0000_0000_1000_0000 as short
+    }
+
+    @Unroll
+    def 'decode a whole short from the buffer - most significant bit last'() {
+        given:
+        def ByteBuffer buffer = ByteBuffer.wrap Shorts.toByteArray(intValue)
+        def decoder = new ShortDecoder()
+
+        when:
+        def decoded = decoder.decode buffer, BitOrder.MOST_SIGNIFICANT_BIT_LAST
+
+        then:
+        decoded == decodedValue
+
+        where:
+        intValue                       | decodedValue
+        0b0000_0000_0000_0000 as short | 0b0000_0000_0000_0000 as short
+        0b0000_0000_0000_0001 as short | 0b0000_0000_1000_0000 as short
+        0b0001_0011_0100_0001 as short | 0b1100_1000_1000_0010 as short
+        0b0111_1111_1111_1111 as short | 0b1111_1110_1111_1111 as short
+        0b1000_0000_0000_0000 as short | 0b0000_0001_0000_0000 as short
+    }
+
+    @Unroll
+    def 'decode a whole short from the buffer - little endian, most significant bit last'() {
+        given:
+        def ByteBuffer buffer = ByteBuffer.wrap Shorts.toByteArray(intValue)
+        def decoder = new ShortDecoder()
+
+        when:
+        def decoded = decoder.decode buffer, Endianness.LITTLE_ENDIAN, BitOrder.MOST_SIGNIFICANT_BIT_LAST
+
+        then:
+        decoded == decodedValue
+
+        where:
+        intValue                       | decodedValue
+        0b0000_0000_0000_0000 as short | 0b0000_0000_0000_0000 as short
+        0b0000_0000_0000_0001 as short | 0b1000_0000_0000_0000 as short
+        0b0001_0011_0100_0001 as short | 0b1000_0010_1100_1000 as short
+        0b0111_1111_1111_1111 as short | 0b1111_1111_1111_1110 as short
+        0b1000_0000_0000_0000 as short | 0b0000_0000_0000_0001 as short
     }
 
     @Unroll
@@ -140,4 +182,6 @@ class ShortTest extends Specification {
         0b1001_0000_0000_0100 as short | 12       | 0b0100_0000_0000_0000 as short
         0b1001_0000_0000_0000 as short | 16       | 0b0000_0000_0000_0000 as short
     }
+
+
 }

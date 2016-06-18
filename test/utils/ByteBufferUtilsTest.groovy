@@ -75,4 +75,86 @@ class ByteBufferUtilsTest extends Specification {
         0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0001 | 63    | 0b1000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000 as long
         0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0001 | 64    | 0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000 as long
     }
+
+    @Unroll
+    def 'reverse bits order of a byte'() {
+        given:
+        def source = byteValue
+
+        when:
+        def result = ByteBufferUtils.reverseBits source
+
+        then:
+        result == reversedByte
+
+        where:
+        byteValue           | reversedByte
+        0b0000_0000 as byte | 0b0000_0000 as byte
+        0b0000_0001 as byte | 0b1000_0000 as byte
+        0b0000_0010 as byte | 0b0100_0000 as byte
+        0b0000_0011 as byte | 0b1100_0000 as byte
+        0b0001_0000 as byte | 0b0000_1000 as byte
+        0b0100_0001 as byte | 0b1000_0010 as byte
+    }
+
+    @Unroll
+    def 'reverse bytes order of a byte array'() {
+        given:
+        def source = bytesValues
+
+        when:
+        def result = ByteBufferUtils.reverseBytes source
+
+        then:
+        result == reversedBytes
+
+        where:
+        bytesValues                                                               | reversedBytes
+        [0b0000_0000 as Byte, 0b0000_0000 as Byte, 0b0000_0000 as Byte] as Byte[] | [0b0000_0000 as Byte, 0b0000_0000 as Byte, 0b0000_0000 as Byte]
+        [0b0000_0000 as Byte, 0b0001_0000 as Byte, 0b0000_0000 as Byte] as Byte[] | [0b0000_0000 as Byte, 0b0001_0000 as Byte, 0b0000_0000 as Byte]
+        [0b0000_0000 as Byte, 0b1100_0000 as Byte, 0b0000_0000 as Byte] as Byte[] | [0b0000_0000 as Byte, 0b1100_0000 as Byte, 0b0000_0000 as Byte]
+        [0b0000_0000 as Byte, 0b0000_0000 as Byte, 0b0000_0001 as Byte] as Byte[] | [0b0000_0001 as Byte, 0b0000_0000 as Byte, 0b0000_0000 as Byte]
+        [0b1100_0000 as Byte, 0b0000_1001 as Byte, 0b0000_0100 as Byte] as Byte[] | [0b0000_0100 as Byte, 0b0000_1001 as Byte, 0b1100_0000 as Byte]
+    }
+
+    @Unroll
+    def 'reverse bits order of a byte array'() {
+        given:
+        def source = bytesValues
+
+        when:
+        def result = ByteBufferUtils.fullReverse source
+
+        then:
+        result == reversedBytes
+
+        where:
+        bytesValues                                                               | reversedBytes
+        [0b0000_0000 as Byte, 0b0000_0000 as Byte, 0b0000_0000 as Byte] as Byte[] | [0b0000_0000 as Byte, 0b0000_0000 as Byte, 0b0000_0000 as Byte]
+        [0b0000_0000 as Byte, 0b0001_0000 as Byte, 0b0000_0000 as Byte] as Byte[] | [0b0000_0000 as Byte, 0b0000_1000 as Byte, 0b0000_0000 as Byte]
+        [0b0000_0000 as Byte, 0b1100_0000 as Byte, 0b0000_0000 as Byte] as Byte[] | [0b0000_0000 as Byte, 0b0000_0011 as Byte, 0b0000_0000 as Byte]
+        [0b0000_0000 as Byte, 0b0000_0000 as Byte, 0b0000_0001 as Byte] as Byte[] | [0b1000_0000 as Byte, 0b0000_0000 as Byte, 0b0000_0000 as Byte]
+        [0b1100_0000 as Byte, 0b0000_1001 as Byte, 0b0000_0100 as Byte] as Byte[] | [0b0010_0000 as Byte, 0b1001_0000 as Byte, 0b0000_0011 as Byte]
+    }
+
+    @Unroll
+    def 'reverse bits order of a bigInteger'() {
+        given:
+        def bigInt = new BigInteger(bytesValues)
+
+        when:
+        def result = ByteBufferUtils.fullReverse bigInt, bytesValues.size() * 8
+        println bytesValues.size() * 8
+
+        then:
+        result == new BigInteger(reversedBytes)
+
+        where:
+        bytesValues                                                               | reversedBytes
+        [0b0000_0000 as byte, 0b0000_0000 as byte, 0b0000_0000 as byte] as byte[] | [0b0000_0000 as byte, 0b0000_0000 as byte, 0b0000_0000 as byte] as byte[]
+        [0b0000_0000 as byte, 0b0001_0000 as byte, 0b0000_0000 as byte] as byte[] | [0b0000_0000 as byte, 0b0000_1000 as byte, 0b0000_0000 as byte] as byte[]
+        [0b0000_0000 as byte, 0b1100_0000 as byte, 0b0000_0000 as byte] as byte[] | [0b0000_0000 as byte, 0b0000_0011 as byte, 0b0000_0000 as byte] as byte[]
+        [0b0000_0000 as byte, 0b0000_0000 as byte, 0b0000_0001 as byte] as byte[] | [0b1000_0000 as byte, 0b0000_0000 as byte, 0b0000_0000 as byte] as byte[]
+        [0b1100_0000 as byte, 0b0000_1001 as byte, 0b0000_0100 as byte] as byte[] | [0b0010_0000 as byte, 0b1001_0000 as byte, 0b0000_0011 as byte] as byte[]
+    }
 }
