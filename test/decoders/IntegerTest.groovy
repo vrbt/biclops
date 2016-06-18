@@ -90,7 +90,7 @@ class IntegerTest extends Specification {
         Integer.MAX_VALUE as int | -129 as int
         Integer.MIN_VALUE as int | 128 as int
         Short.MAX_VALUE as int   | -8454144 as int
-        Short.MIN_VALUE as int   | 8454143 as int
+        Short.MIN_VALUE as int   | 8388608 as int
     }
 
     @Unroll
@@ -110,10 +110,10 @@ class IntegerTest extends Specification {
         0b0001_0000_0000_0000_0000_0000_0000_0000 as int | 1 as int
         0b0010_0000_0000_0000_0000_0000_0000_0000 as int | 2 as int
         0b0100_0000_0000_0000_0000_0000_0000_0000 as int | 4 as int
-        0b1000_0000_0000_0000_0000_0000_0000_0000 as int | 8 as int
+        0b1000_0000_0000_0000_0000_0000_0000_0000 as int | -8 as int
         0b0011_0000_0000_0000_0000_0000_0000_0000 as int | 3 as int
         0b0110_0000_0000_0000_0000_0000_0000_0000 as int | 6 as int
-        0b1001_0000_0000_0000_0000_0000_0000_0000 as int | 9 as int
+        0b1001_0000_0000_0000_0000_0000_0000_0000 as int | -7 as int
     }
 
     @Unroll

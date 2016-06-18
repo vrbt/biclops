@@ -150,10 +150,10 @@ class ShortTest extends Specification {
         0b0001_0000_0000_0000 as short | 1 as short
         0b0010_0000_0000_0000 as short | 2 as short
         0b0100_0000_0000_0000 as short | 4 as short
-        0b1000_0000_0000_0000 as short | 8 as short
+        0b1000_0000_0000_0000 as short | -8 as short
         0b0011_0000_0000_0000 as short | 3 as short
         0b0110_0000_0000_0000 as short | 6 as short
-        0b1001_0000_0000_0000 as short | 9 as short
+        0b1001_0000_0000_0000 as short | -7 as short
     }
 
     @Unroll

@@ -56,10 +56,10 @@ class BitStructureTest extends Specification {
         where:
         byteValue           | firstBit | integerValue | lastBit
         0b1010_1100 as byte | true     | 22           | false
-        0b1100_0011 as byte | true     | 33           | true
-        0b1101_0101 as byte | true     | 42           | true
-        0b0111_1110 as byte | false    | 63           | false
-        0b0100_1001 as byte | false    | 36           | true
+        0b1100_0011 as byte | true     | -31          | true
+        0b1101_0101 as byte | true     | -22          | true
+        0b0111_1110 as byte | false    | -1           | false
+        0b0100_1001 as byte | false    | -28          | true
         0b0001_1100 as byte | false    | 14           | false
     }
 
@@ -83,10 +83,10 @@ class BitStructureTest extends Specification {
 
         where:
         byteValue           | firstIntValue | secondIntValue | bitValue
-        0b1010_1100 as byte | 2             | 22             | false
-        0b1100_0011 as byte | 3             | 1              | true
-        0b1101_0101 as byte | 3             | 10             | true
-        0b0111_1110 as byte | 1             | 31             | false
+        0b1010_1100 as byte | -2            | -10            | false
+        0b1100_0011 as byte | -1            | 1              | true
+        0b1101_0101 as byte | -1            | 10             | true
+        0b0111_1110 as byte | 1             | -1             | false
         0b0100_1001 as byte | 1             | 4              | true
         0b0001_1100 as byte | 0             | 14             | false
     }

@@ -147,7 +147,7 @@ class ByteBufferUtilsTest extends Specification {
         println bytesValues.size() * 8
 
         then:
-        result == new BigInteger(reversedBytes)
+        result == new BigInteger(1, reversedBytes) || result.toByteArray()
 
         where:
         bytesValues                                                               | reversedBytes

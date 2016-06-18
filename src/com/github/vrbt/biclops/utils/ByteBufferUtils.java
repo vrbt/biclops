@@ -27,7 +27,7 @@ public class ByteBufferUtils {
 
     public static ByteBuffer leftShift(final ByteBuffer buffer, int shift) {
         final BigInteger bigInt = new BigInteger(buffer.array());
-        final byte[] shiftedBytes = bigInt.shiftLeft(shift).and(allOnes(buffer.remaining() * BYTE_LENGTH)).toByteArray();
+        final byte[] shiftedBytes = bigInt.shiftLeft(shift).and(allOnes((buffer.remaining()) * BYTE_LENGTH)).toByteArray();
         final int resultLength = buffer.capacity();
         final int sourceOffset = resultLength >= shiftedBytes.length ? 0 : 1;
         final int destinationOffset = resultLength - shiftedBytes.length > 0 ? resultLength - shiftedBytes.length : 0;

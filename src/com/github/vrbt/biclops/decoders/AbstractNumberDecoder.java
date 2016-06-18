@@ -59,7 +59,7 @@ public abstract class AbstractNumberDecoder<T extends Number> implements Decoder
     public abstract T decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length);
 
     protected BigInteger rawDecode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length) {
-        final BigInteger bigInteger = new BigInteger(1, Arrays.copyOf(buffer.array(), getTypeBitLength() / BYTE_LENGTH)).shiftRight(getTypeBitLength() - length);
+        final BigInteger bigInteger = new BigInteger(Arrays.copyOf(buffer.array(), getTypeBitLength() / BYTE_LENGTH)).shiftRight(getTypeBitLength() - length);
         ByteBufferUtils.leftShift(buffer, length);
         return ByteBufferUtils.reorder(bigInteger, byteOrder, bitOrder, length);
     }

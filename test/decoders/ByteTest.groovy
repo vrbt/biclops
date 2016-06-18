@@ -84,10 +84,10 @@ class ByteTest extends Specification {
         0b0001_0000 as byte | 1 as byte
         0b0010_0000 as byte | 2 as byte
         0b0100_0000 as byte | 4 as byte
-        0b1000_0000 as byte | 8 as byte
+        0b1000_0000 as byte | -8 as byte
         0b0011_0000 as byte | 3 as byte
         0b0110_0000 as byte | 6 as byte
-        0b1001_0000 as byte | 9 as byte
+        0b1001_0000 as byte | -7 as byte
     }
 
     @Unroll
