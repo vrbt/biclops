@@ -14,7 +14,7 @@ import static com.github.vrbt.biclops.ordering.Endianness.BIG_ENDIAN;
 /**
  * Created by Robert on 2016-06-18.
  */
-public abstract class AbstractNumberDecoder<T extends Number> implements Decoder<Number> {
+public abstract class AbstractNumberDecoder<T> implements Decoder<T> {
 
     protected static final byte BYTE_LENGTH = 8;
 
