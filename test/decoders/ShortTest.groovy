@@ -183,5 +183,51 @@ class ShortTest extends Specification {
         0b1001_0000_0000_0000 as short | 16       | 0b0000_0000_0000_0000 as short
     }
 
+    @Unroll
+    def 'decode a signed 13-bit part of a short from the buffer and shift the buffer - Little Endian, Most Significant Bit Last'() {
+        given:
+        def ByteBuffer buffer = ByteBuffer.wrap Shorts.toByteArray(intValue)
+        def decoder = new ShortDecoder()
 
+        when:
+        def result = decoder.decode buffer, Endianness.LITTLE_ENDIAN, BitOrder.MOST_SIGNIFICANT_BIT_LAST, 13
+
+        then:
+        result == resultValue
+
+        where:
+        intValue                       | resultValue
+        0b0001_0001_0001_0000 as short | 0b0000_1000_1000_1000 as short
+        0b0010_0000_0001_0000 as short | 0b0000_1000_0000_0100 as short
+        0b0100_0000_0001_0000 as short | 0b0000_1000_0000_0010 as short
+        0b0011_0000_0000_0000 as short | 0b0000_0000_0000_1100 as short
+        0b0110_0000_0000_0000 as short | 0b0000_0000_0000_0110 as short
+        0b1001_0000_0000_0011 as short | 0b0000_0000_0000_1001 as short
+        0b1001_0000_0000_0000 as short | 0b0000_0000_0000_1001 as short
+        0b1001_0000_0100_0000 as short | 0b0000_0010_0000_1001 as short
+        0b1001_0000_0000_1100 as short | 0b1111_0000_0000_1001 as short
+        0b1001_0000_1111_1111 as short | 0b1111_1111_0000_1001 as short
+    }
+
+    @Unroll
+    def 'decode a signed or unsigned 13-bit part of a short from the buffer - Little Endian'() {
+        given:
+        def ByteBuffer buffer = ByteBuffer.wrap Shorts.toByteArray(intValue)
+        def decoder = new ShortDecoder()
+
+        when:
+        def result = decoder.decode buffer, Endianness.LITTLE_ENDIAN, 13, signed
+
+        then:
+        result == resultValue
+
+        where:
+        //Cut to 13 bites signed/unsigned, pad to full bytes (16 bits in this case) with leading bits, then reverse byte order
+        intValue                       | resultValue                    | signed
+        0b1001_0000_0000_0011 as short | 0b0000_0000_1111_0010 as short | true
+        0b1001_0000_0011_0000 as short | 0b0000_0110_1111_0010 as short | true
+        0b0001_0000_0100_1000 as short | 0b0000_1001_0000_0010 as short | true
+        0b1011_0000_0000_1100 as short | 0b0000_0001_1111_0110 as short | true
+        0b0101_0000_1111_1111 as short | 0b0001_1111_0000_1010 as short | true
+    }
 }

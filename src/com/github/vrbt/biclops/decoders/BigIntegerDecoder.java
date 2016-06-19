@@ -19,7 +19,7 @@ public class BigIntegerDecoder extends AbstractNumberDecoder<BigInteger> {
     }
 
     @Override
-    public BigInteger decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length) {
-        return rawDecode(buffer, byteOrder, bitOrder, length);
+    public BigInteger decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length, boolean signed) {
+        return rawDecode(buffer, byteOrder, bitOrder, length, signed);
     }
 }

@@ -17,7 +17,7 @@ public class ShortDecoder extends AbstractNumberDecoder<Short> {
     }
 
     @Override
-    public Short decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length) {
-        return rawDecode(buffer, byteOrder, bitOrder, length).shortValue();
+    public Short decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length, boolean signed) {
+        return rawDecode(buffer, byteOrder, bitOrder, length, signed).shortValue();
     }
 }

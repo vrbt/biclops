@@ -15,7 +15,7 @@ public class ByteDecoder extends AbstractNumberDecoder<Byte> {
     }
 
     @Override
-    public Byte decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length) {
-        return rawDecode(buffer, byteOrder, bitOrder, length).byteValue();
+    public Byte decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length, boolean signed) {
+        return rawDecode(buffer, byteOrder, bitOrder, length, signed).byteValue();
     }
 }

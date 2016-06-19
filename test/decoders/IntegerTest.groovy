@@ -148,4 +148,28 @@ class IntegerTest extends Specification {
         0b1001_0000_0000_1100_0000_1100_0000_1001 as int | 31       | 0b1000_0000_0000_0000_0000_0000_0000_0000 as int
         0b1001_0000_1110_0000_0000_0000_0110_0011 as int | 32       | 0b0000_0000_0000_0000_0000_0000_0000_0000 as int
     }
+
+    @Unroll
+    def 'decode a signed or unsigned integer from the buffer'() {
+        given:
+        def ByteBuffer buffer = ByteBuffer.wrap Ints.toByteArray(intValue)
+        def decoder = new IntegerDecoder()
+
+        when:
+        def decodedValue = decoder.decode buffer, 31, signed
+
+        then:
+        decodedValue == expectedValue
+
+        where:
+        intValue            | signed | expectedValue
+        126 as int          | true   | 63 as int
+        -1 as int           | true   | -1 as int
+        1 as int            | true   | 0 as int
+        126 as int          | false  | 63 as int
+        -1 as int           | false  | 2_147_483_647 as int
+        1 as int            | false  | 0 as int
+        -432_226_216 as int | true   | -216_113_108 as int
+        -432_226_216 as int | false  | 1_931_370_540 as int
+    }
 }

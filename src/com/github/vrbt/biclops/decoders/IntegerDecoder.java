@@ -17,7 +17,7 @@ public class IntegerDecoder extends AbstractNumberDecoder<Integer> {
         return INTEGER_LENGTH;
     }
     @Override
-    public Integer decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length) {
-        return rawDecode(buffer, byteOrder, bitOrder, length).intValue();
+    public Integer decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length, boolean signed) {
+        return rawDecode(buffer, byteOrder, bitOrder, length, signed).intValue();
     }
 }

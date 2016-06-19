@@ -2,6 +2,7 @@ package decoders
 
 import com.github.vrbt.biclops.annotations.ByteField
 import com.github.vrbt.biclops.decoders.ByteDecoder
+import com.github.vrbt.biclops.ordering.BitOrder
 import org.apache.commons.lang3.StringUtils
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -113,5 +114,51 @@ class ByteTest extends Specification {
         0b0110_0011 as byte | 6        | 0b1100_0000 as byte
         0b1001_0001 as byte | 7        | 0b1000_0000 as byte
         0b1001_0110 as byte | 8        | 0b0000_0000 as byte
+    }
+
+    @Unroll
+    def 'decode an unsigned 6-bit part of a byte from the buffer - most significant bit last'() {
+        given:
+        def ByteBuffer buffer = ByteBuffer.wrap intValue
+        def decoder = new ByteDecoder()
+
+        when:
+        def decoded = decoder.decode buffer, BitOrder.MOST_SIGNIFICANT_BIT_LAST, 6, false
+
+        then:
+        decoded == decodedValue
+
+        where:
+        intValue            | decodedValue
+        0b0001_1100 as byte | 0b0011_1000 as byte
+        0b0010_0100 as byte | 0b0010_0100 as byte
+        0b0100_1000 as byte | 0b0001_0010 as byte
+        0b1110_0100 as byte | 0b0010_0111 as byte
+        0b0011_1000 as byte | 0b0001_1100 as byte
+        0b0110_0100 as byte | 0b0010_0110 as byte
+        0b1001_1100 as byte | 0b0011_1001 as byte
+    }
+
+    @Unroll
+    def 'decode a signed 6-bit part of a byte from the buffer - most significant bit last'() {
+        given:
+        def ByteBuffer buffer = ByteBuffer.wrap intValue
+        def decoder = new ByteDecoder()
+
+        when:
+        def decoded = decoder.decode buffer, BitOrder.MOST_SIGNIFICANT_BIT_LAST, 6
+
+        then:
+        decoded == decodedValue
+
+        where:
+        intValue            | decodedValue
+        0b0001_1100 as byte | 0b1111_1000 as byte
+        0b0010_0100 as byte | 0b1110_0100 as byte
+        0b0100_1000 as byte | 0b0001_0010 as byte
+        0b1110_0100 as byte | 0b1110_0111 as byte
+        0b0011_1000 as byte | 0b0001_1100 as byte
+        0b0110_0100 as byte | 0b1110_0110 as byte
+        0b1001_1100 as byte | 0b1111_1001 as byte
     }
 }

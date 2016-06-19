@@ -40,22 +40,36 @@ public class ByteBufferUtils {
         return BigInteger.ZERO.setBit(length).subtract(BigInteger.ONE);
     }
 
-    public static BigInteger reorder(final BigInteger input, final Endianness byteOrder, final BitOrder bitOrder, final int bitLength) {
-        final byte[] paddedBytes = new byte[bitLength / BYTE_LENGTH];
+    public static BigInteger reorder(final BigInteger input, final Endianness byteOrder, final BitOrder bitOrder, final int bitLength, final boolean signed) {
+        final int byteLength = bitLength / BYTE_LENGTH + (bitLength % BYTE_LENGTH > 0 ? 1 : 0);
+        final byte[] paddedBytes = new byte[byteLength];
         final byte[] inputBytes = input.toByteArray();
-        final int sourceOffset = inputBytes.length - bitLength / BYTE_LENGTH > 0 ? inputBytes.length - bitLength / BYTE_LENGTH : 0;
+        final int sourceOffset = inputBytes.length - byteLength > 0 ? inputBytes.length - byteLength : 0;
         final int copiedLength = inputBytes.length - sourceOffset;
-        final int destinationOffset = bitLength / BYTE_LENGTH - inputBytes.length > 0 ? bitLength / BYTE_LENGTH - inputBytes.length : 0;
+        final int destinationOffset = byteLength - inputBytes.length > 0 ? byteLength - inputBytes.length : 0;
         System.arraycopy(input.toByteArray(), sourceOffset, paddedBytes, destinationOffset, copiedLength);
         if (byteOrder != Endianness.BIG_ENDIAN) {
             if (bitOrder != BitOrder.MOST_SIGNIFICANT_BIT_FIRST) {
-                return new BigInteger(toPrimitive(fullReverse(toObject(paddedBytes))));
+                if (signed) {
+                    return new BigInteger(toPrimitive(fullReverse(toObject(paddedBytes)))).shiftRight(byteLength * 8 - bitLength);
+                } else {
+                    return new BigInteger(1, toPrimitive(fullReverse(toObject(paddedBytes)))).shiftRight(byteLength * 8 - bitLength);
+                }
             } else {
-                return new BigInteger(toPrimitive(reverseBytes(toObject(paddedBytes))));
+                if (signed) {
+                    return new BigInteger(toPrimitive(reverseBytes(toObject(paddedBytes))));
+                } else {
+                    return new BigInteger(1, toPrimitive(reverseBytes(toObject(paddedBytes))));
+                }
             }
         } else {
             if (bitOrder != BitOrder.MOST_SIGNIFICANT_BIT_FIRST) {
-                return new BigInteger(toPrimitive(reverseBits(toObject(paddedBytes))));
+                if (signed) {
+                    return new BigInteger(toPrimitive(reverseBits(toObject(paddedBytes)))).shiftRight(byteLength * 8 - bitLength);
+                } else {
+                    return new BigInteger(1, toPrimitive(reverseBits(toObject(paddedBytes)))).shiftRight(byteLength * 8 - bitLength);
+                }
+
             } else {
                 return input;
             }
@@ -63,15 +77,27 @@ public class ByteBufferUtils {
     }
 
     public static BigInteger fullReverse(final BigInteger input, final int length) {
-        return reorder(input, Endianness.LITTLE_ENDIAN, BitOrder.MOST_SIGNIFICANT_BIT_LAST, length);
+        return reorder(input, Endianness.LITTLE_ENDIAN, BitOrder.MOST_SIGNIFICANT_BIT_LAST, length, true);
+    }
+
+    public static BigInteger fullReverse(final BigInteger input, final int length, final boolean signed) {
+        return reorder(input, Endianness.LITTLE_ENDIAN, BitOrder.MOST_SIGNIFICANT_BIT_LAST, length, signed);
     }
 
     public static BigInteger reverseBytes(final BigInteger input, final int length) {
-        return reorder(input, Endianness.LITTLE_ENDIAN, BitOrder.MOST_SIGNIFICANT_BIT_FIRST, length);
+        return reorder(input, Endianness.LITTLE_ENDIAN, BitOrder.MOST_SIGNIFICANT_BIT_FIRST, length, true);
+    }
+
+    public static BigInteger reverseBytes(final BigInteger input, final int length, final boolean signed) {
+        return reorder(input, Endianness.LITTLE_ENDIAN, BitOrder.MOST_SIGNIFICANT_BIT_FIRST, length, signed);
     }
 
     public static BigInteger reverseBits(final BigInteger input, final int length) {
-        return reorder(input, Endianness.BIG_ENDIAN, BitOrder.MOST_SIGNIFICANT_BIT_LAST, length);
+        return reorder(input, Endianness.BIG_ENDIAN, BitOrder.MOST_SIGNIFICANT_BIT_LAST, length, true);
+    }
+
+    public static BigInteger reverseBits(final BigInteger input, final int length, final boolean signed) {
+        return reorder(input, Endianness.BIG_ENDIAN, BitOrder.MOST_SIGNIFICANT_BIT_LAST, length, signed);
     }
 
     public static Byte[] fullReverse(final Byte[] input) {

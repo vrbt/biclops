@@ -17,7 +17,7 @@ public class LongDecoder extends AbstractNumberDecoder<Long> {
     }
 
     @Override
-    public Long decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length) {
-        return rawDecode(buffer, byteOrder, bitOrder, length).longValue();
+    public Long decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length, boolean signed) {
+        return rawDecode(buffer, byteOrder, bitOrder, length, signed).longValue();
     }
 }
