@@ -8,16 +8,15 @@ import java.nio.ByteBuffer;
 /**
  * Created by Robert on 2016-06-12.
  */
-public class ShortDecoder extends AbstractNumberDecoder<Short> {
-    private static final int SHORT_LENGTH = 16;
+class ShortDecoder extends AbstractNumberDecoder<Short> {
 
-    @Override
-    protected int getTypeBitLength() {
-        return SHORT_LENGTH;
+    ShortDecoder(Endianness byteOrder, BitOrder bitOrder, int valueLengthInBits, boolean signed, int typeLengthInBits) {
+        super(byteOrder, bitOrder, valueLengthInBits, signed, typeLengthInBits);
     }
 
     @Override
-    public Short decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length, boolean signed) {
-        return rawDecode(buffer, byteOrder, bitOrder, length, signed).shortValue();
+    public Short decode(ByteBuffer buffer) {
+        return rawDecode(buffer).shortValue();
     }
+
 }

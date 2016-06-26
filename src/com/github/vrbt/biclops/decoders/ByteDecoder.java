@@ -8,14 +8,14 @@ import java.nio.ByteBuffer;
 /**
  * Created by Robert on 2016-06-12.
  */
-public class ByteDecoder extends AbstractNumberDecoder<Byte> {
-    @Override
-    protected int getTypeBitLength() {
-        return BYTE_LENGTH;
+class ByteDecoder extends AbstractNumberDecoder<Byte> {
+
+    ByteDecoder(Endianness byteOrder, BitOrder bitOrder, int valueLengthInBits, boolean signed, int typeLengthInBits) {
+        super(byteOrder, bitOrder, valueLengthInBits, signed, typeLengthInBits);
     }
 
     @Override
-    public Byte decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length, boolean signed) {
-        return rawDecode(buffer, byteOrder, bitOrder, length, signed).byteValue();
+    public Byte decode(ByteBuffer buffer) {
+        return rawDecode(buffer).byteValue();
     }
 }

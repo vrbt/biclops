@@ -8,16 +8,14 @@ import java.nio.ByteBuffer;
 /**
  * Created by Robert on 2016-06-12.
  */
-public class LongDecoder extends AbstractNumberDecoder<Long> {
-    private static final int LONG_LENGTH = 64;
+class LongDecoder extends AbstractNumberDecoder<Long> {
 
-    @Override
-    protected int getTypeBitLength() {
-        return LONG_LENGTH;
+    LongDecoder(Endianness byteOrder, BitOrder bitOrder, int valueLengthInBits, boolean signed, int typeLengthInBits) {
+        super(byteOrder, bitOrder, valueLengthInBits, signed, typeLengthInBits);
     }
 
     @Override
-    public Long decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length, boolean signed) {
-        return rawDecode(buffer, byteOrder, bitOrder, length, signed).longValue();
+    public Long decode(ByteBuffer buffer) {
+        return rawDecode(buffer).longValue();
     }
 }

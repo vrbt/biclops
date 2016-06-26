@@ -9,17 +9,14 @@ import java.nio.ByteBuffer;
 /**
  * Created by Robert on 2016-06-12.
  */
-public class BigIntegerDecoder extends AbstractNumberDecoder<BigInteger> {
+class BigIntegerDecoder extends AbstractNumberDecoder<BigInteger> {
 
-    private static final int BIG_INTEGER_DEFAULT_LENGTH = 128;
-
-    @Override
-    protected int getTypeBitLength() {
-        return BIG_INTEGER_DEFAULT_LENGTH;
+    BigIntegerDecoder(Endianness byteOrder, BitOrder bitOrder, int valueLengthInBits, boolean signed, int typeLengthInBits) {
+        super(byteOrder, bitOrder, valueLengthInBits, signed, typeLengthInBits);
     }
 
     @Override
-    public BigInteger decode(ByteBuffer buffer, Endianness byteOrder, BitOrder bitOrder, int length, boolean signed) {
-        return rawDecode(buffer, byteOrder, bitOrder, length, signed);
+    public BigInteger decode(ByteBuffer buffer) {
+        return rawDecode(buffer);
     }
 }
