@@ -16,7 +16,8 @@ public enum FieldAnnotation {
     INTEGER_FIELD(IntegerField.class),
     LONG_FIELD(LongField.class),
     SHORT_FIELD(ShortField.class),
-    STRING_FIELD(StringField.class);
+    STRING_FIELD(StringField.class),
+    OBJECT_FIELD(ObjectField.class);
 
     private static List<? super Annotation> annotationClasses;
     private final Class<? extends Annotation> annotationClass;
