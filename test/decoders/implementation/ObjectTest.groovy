@@ -26,9 +26,10 @@ class ObjectTest extends Specification {
         def decoder = new DefaultObjectDecoderBuilder(SingleShortFieldClass.class).addDecoder singleDecoder build()
 
         when:
-        SingleShortFieldClass decodedObject = decoder.decode buffer
+        def decodedObject = decoder.decode buffer
 
         then:
+        SingleShortFieldClass.equals(decodedObject.class)
         decodedObject.field == fieldValue
 
         where:

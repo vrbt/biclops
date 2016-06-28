@@ -9,12 +9,12 @@ import java.util.List;
 /**
  * Created by Robert on 2016-06-26.
  */
-class DefaultObjectDecoderBuilder implements ObjectDecoderBuilder<DefaultObjectDecoder, DefaultObjectDecoderBuilder> {
+class DefaultObjectDecoderBuilder<T> implements ObjectDecoderBuilder<DefaultObjectDecoder, DefaultObjectDecoderBuilder<T>> {
 
-    protected final List<Decoder> decoders = new ArrayList<>();
-    protected final Class clazz;
+    protected final List<Decoder<T>> decoders = new ArrayList<>();
+    protected final Class<T> clazz;
 
-    DefaultObjectDecoderBuilder(final Class clazz) {
+    DefaultObjectDecoderBuilder(final Class<T> clazz) {
         this.clazz = clazz;
     }
 
@@ -25,7 +25,7 @@ class DefaultObjectDecoderBuilder implements ObjectDecoderBuilder<DefaultObjectD
     }
 
     @Override
-    public DefaultObjectDecoder build() {
+    public DefaultObjectDecoder<T> build() {
         return new DefaultObjectDecoder(clazz, decoders);
     }
 }
